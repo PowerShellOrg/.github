@@ -1,0 +1,10 @@
+# PowerShellOrg funding configuration
+#
+# Uncomment and fill in the appropriate platform(s) if/when sponsorship
+# is set up. See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+#
+# github:          # GitHub Sponsors username(s)
+# open_collective: # Open Collective handle
+# ko_fi:           # Ko-fi username
+# tidelift:        # Tidelift package name (e.g. npm/package-name)
+# custom:          # Array of custom sponsorship URLs

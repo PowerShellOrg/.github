@@ -1,0 +1,92 @@
+name: PowerShell CI
+
+# Reusable workflow. Call from a consuming repo:
+#
+#   jobs:
+#     ci:
+#       uses: PowerShellOrg/.github/.github/workflows/powershell-ci.yml@main
+#
+# Task names are fixed convention across all PowerShellOrg repos:
+#   Init, Clean, Build, Test, Analyze, Publish
+# See the org wiki for psake task naming requirements.
+
+on:
+  workflow_call: {}
+
+jobs:
+  ci:
+    name: PS ${{ matrix.ps-version }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Windows PowerShell 5.1 — only available on Windows runners
+          - os: windows-latest
+            ps-version: "5.1"
+            shell: powershell
+
+          # PowerShell 7.x — all three platforms
+          - os: windows-latest
+            ps-version: "7.x"
+            shell: pwsh
+
+          - os: ubuntu-latest
+            ps-version: "7.x"
+            shell: pwsh
+
+          - os: macos-latest
+            ps-version: "7.x"
+            shell: pwsh
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # PS 5.1 needs TLS 1.2 forced and the NuGet provider bootstrapped before
+      # PowerShellGet will talk to PSGallery reliably.
+      - name: Bootstrap NuGet provider (PS 5.1 only)
+        if: matrix.ps-version == '5.1'
+        shell: powershell
+        run: |
+          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+          Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+      - name: Install build dependencies
+        shell: ${{ matrix.shell }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installParams = @{
+            Scope              = 'CurrentUser'
+            Force              = $true
+            SkipPublisherCheck = $true
+          }
+          Install-Module -Name psake            @installParams
+          Install-Module -Name PowerShellBuild  @installParams
+          Install-Module -Name PSScriptAnalyzer @installParams
+          Install-Module -Name Pester           @installParams -MinimumVersion '5.0' -MaximumVersion '5.99'
+
+      - name: Run psake Init
+        shell: ${{ matrix.shell }}
+        run: Invoke-psake Init
+        continue-on-error: false
+
+      - name: Run tests
+        shell: ${{ matrix.shell }}
+        run: Invoke-psake Test
+
+      - name: Run static analysis
+        shell: ${{ matrix.shell }}
+        run: Invoke-psake Analyze
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}-ps${{ matrix.ps-version }}
+          path: |
+            **/testResults.xml
+            **/TestResults.xml
+            output/testResults*.xml
+          if-no-files-found: warn

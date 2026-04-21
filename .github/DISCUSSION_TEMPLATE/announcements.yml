@@ -1,0 +1,18 @@
+title: "[Announcement]: "
+labels:
+  - announcement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for official announcements: new releases, adoption news, governance changes, maintainer changes, or other org-wide updates.
+
+        Only maintainers and the Steward should post in this category. Community members can react and reply.
+
+  - type: textarea
+    id: announcement
+    attributes:
+      label: Announcement
+      description: The full announcement text. Include links to relevant issues, PRs, or releases.
+    validations:
+      required: true
