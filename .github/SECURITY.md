@@ -32,9 +32,7 @@ This creates an encrypted draft security advisory visible only to maintainers an
 
 If GitHub Private Vulnerability Reporting is unavailable or you prefer email:
 
-**`security@powershellorg.example`** — `<FILL IN: replace with real address before publishing>`
-
-Encrypt your report with our PGP key if possible: `<FILL IN: PGP key fingerprint or link, or remove this line if not using PGP>`
+**<privacy@powershell.org>**
 
 ### What to include
 

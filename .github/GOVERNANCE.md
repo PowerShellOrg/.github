@@ -226,4 +226,4 @@ Changes to this governance document follow the rules above: Council comment wind
 
 ---
 
-*Last updated: [DATE]. Maintained by the Org Admin with input from the Council.*
+*Last updated: 2026/04/21. Maintained by the Org Admin with input from the Council.*
