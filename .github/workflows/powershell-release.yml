@@ -1,0 +1,106 @@
+name: PowerShell Release
+
+# Reusable workflow. Call from a tag-triggered workflow in a consuming repo:
+#
+#   on:
+#     push:
+#       tags: ['v*']
+#
+#   jobs:
+#     release:
+#       uses: PowerShellOrg/.github/.github/workflows/powershell-release.yml@main
+#       with:
+#         module-name: MyModule
+#       secrets:
+#         PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+#
+# The PSGALLERY_API_KEY secret must be set in the consuming repository.
+# See docs/maintainer-onboarding.md for the key naming and issuance process.
+#
+# Task names are fixed convention: Init, Build, Test, Analyze, Publish
+# The Publish task must read $env:PSGALLERY_API_KEY.
+
+on:
+  workflow_call:
+    inputs:
+      module-name:
+        description: "Module name as it appears on PSGallery (e.g. PSDepend)"
+        required: true
+        type: string
+      create-github-release:
+        description: "Create a GitHub Release with auto-generated notes after publish"
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      PSGALLERY_API_KEY:
+        description: "Scoped PSGallery API key for this module. See docs/maintainer-onboarding.md."
+        required: true
+
+jobs:
+  release:
+    name: Release ${{ inputs.module-name }}
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install build dependencies
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installParams = @{
+            Scope              = 'CurrentUser'
+            Force              = $true
+            SkipPublisherCheck = $true
+          }
+          Install-Module -Name psake            @installParams
+          Install-Module -Name PowerShellBuild  @installParams
+          Install-Module -Name PSScriptAnalyzer @installParams
+          Install-Module -Name Pester           @installParams -MinimumVersion '5.0' -MaximumVersion '5.99'
+
+      - name: Init
+        shell: pwsh
+        run: Invoke-psake Init
+
+      - name: Test
+        shell: pwsh
+        run: Invoke-psake Test
+
+      - name: Analyze
+        shell: pwsh
+        run: Invoke-psake Analyze
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: release-test-results
+          path: |
+            **/testResults.xml
+            **/TestResults.xml
+            output/testResults*.xml
+          if-no-files-found: warn
+
+      - name: Build
+        shell: pwsh
+        run: Invoke-psake Build
+
+      - name: Publish to PSGallery
+        shell: pwsh
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: Invoke-psake Publish
+
+      - name: Create GitHub Release
+        if: ${{ inputs.create-github-release }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" `
+            --title "${{ inputs.module-name }} ${{ github.ref_name }}" `
+            --generate-notes `
+            --verify-tag
