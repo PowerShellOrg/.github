@@ -8,7 +8,7 @@ Welcome to PowerShellOrg. This checklist walks you through everything you need t
 
 ### GitHub org access
 
-- [ ] Accept the org invite from the Steward (check your GitHub notifications and email)
+- [ ] Accept the org invite from the Org Admin (check your GitHub notifications and email)
 - [ ] Verify you have **Write** access to your assigned repo(s) — navigate to the repo → **Settings** → **Collaborators and teams**
 - [ ] Enable **two-factor authentication** on your GitHub account if not already enabled — this is a hard requirement for org membership ([docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication))
 
@@ -20,7 +20,7 @@ Welcome to PowerShellOrg. This checklist walks you through everything you need t
 ### PSGallery account
 
 - [ ] Confirm you have a [PowerShell Gallery](https://www.powershellgallery.com/) account
-- [ ] Share your PSGallery username with the Steward — you will need it for the API key issuance step below
+- [ ] Share your PSGallery username with the Org Admin — you will need it for the API key issuance step below
 
 ---
 
@@ -46,7 +46,7 @@ Verify the repo's default branch has the following protections enabled. Navigate
 - [ ] **Do not allow force pushes** — enabled
 - [ ] **Do not allow deletions** — enabled
 
-If any of these are missing, notify the Steward before merging anything.
+If any of these are missing, notify the project's Steward before merging anything.
 
 ---
 
@@ -54,9 +54,9 @@ If any of these are missing, notify the Steward before merging anything.
 
 PowerShellOrg uses **per-repo scoped API keys** for PSGallery. You do not get an org-wide key.
 
-### Key issuance process (Steward action)
+### Key issuance process (Org Admin action)
 
-The Steward creates the key with these parameters:
+The Org Admin creates the key with these parameters:
 
 | Parameter | Value |
 |---|---|
@@ -64,21 +64,21 @@ The Steward creates the key with these parameters:
 | Glob pattern | The module name exactly (e.g., `PSDepend`) |
 | Expiration | 365 days (the PSGallery maximum) |
 
-The Steward then:
+The Org Admin then:
 1. Creates or updates the `PSGALLERY_API_KEY` Actions secret in the repo
 2. Adds a rotation reminder to the private key tracking issue (pinned to this repo)
 3. Notifies the maintainer that the key is in place
 
 ### Maintainer steps
 
-- [ ] Confirm with the Steward that `PSGALLERY_API_KEY` is set in the repo's Actions secrets (**Settings** → **Secrets and variables** → **Actions**)
+- [ ] Confirm with the Org Admin that `PSGALLERY_API_KEY` is set in the repo's Actions secrets (**Settings** → **Secrets and variables** → **Actions**)
 - [ ] Note the key expiration month — the Steward will initiate rotation, but you may be asked to trigger it
 
 ### Key rotation
 
-Keys expire after 365 days. The Steward tracks rotation in a private pinned issue. When rotation is due:
-1. Steward creates a new key on PSGallery with the same glob, new `YYYY-MM` suffix in the name
-2. Steward updates the `PSGALLERY_API_KEY` secret in the repo
+Keys expire after 365 days. The Org Admin tracks rotation in a private pinned issue. When rotation is due:
+1. Org Admin creates a new key on PSGallery with the same glob, new `YYYY-MM` suffix in the name
+2. Org Admin updates the `PSGALLERY_API_KEY` secret in the repo
 3. Old key is deleted from PSGallery
 4. Tracking issue is updated
 
@@ -112,6 +112,7 @@ If the CI workflow is not present or not green, see the [Revival Playbook](reviv
 |---|---|
 | `status-active` | 7 days |
 | `status-stable` | 30 days |
+| `status-paused` | Suspended; security issues only, best-effort |
 
 First response means: a label applied, a comment acknowledging the issue, or a review comment on the PR — not necessarily a resolution.
 
@@ -129,9 +130,23 @@ Set up GitHub notifications for your repo: **Watch** → **All activity**, or at
 - Tag the release commit with `vX.Y.Z` — this triggers the release workflow
 - The GitHub Release notes are auto-generated; add a brief human summary at the top if the automated notes are too sparse
 
+### If you are the Steward
+
+As Steward, you have additional responsibilities beyond what this checklist covers. The key differences from co-maintainer onboarding:
+
+- **You drive the revival playbook.** Open a tracking issue in the `.github` repo immediately after transfer — that issue is the source of truth for the revival's progress. See [revival-playbook.md](revival-playbook.md) for the full checklist.
+- **You are the project's tiebreaker.** Contested technical and process decisions within the repo are yours to resolve, with input from the project's maintainers.
+- **You are the project's external face.** You announce releases, respond to high-visibility issues, and represent the project when needed.
+- **You propose graduation.** When the project meets the criteria in GOVERNANCE.md, you open the graduation discussion in the Council channel.
+- **You flag problems early.** If you are overextended, need to step down, or believe the project should be archived, notify the Org Admin before the situation becomes a crisis. Your departure triggers a 30-day vacancy window — earlier notice means a smoother handoff.
+
+PSGallery API key issuance is an Org Admin action regardless of your Steward status — you do not need to create or manage the key directly.
+
+---
+
 ### Escalation
 
 - Blocked by a technical question? Post in the Council channel — another maintainer may know the answer.
-- Blocked by a process question? Ask the Steward.
-- Seeing behavior that might violate the Code of Conduct? Report to `conduct@powershellorg.example` or message the Steward directly.
-- Need to step down or take a break? Tell the Steward as early as possible — we would rather hand off gracefully than have a repo go dark unexpectedly.
+- Blocked by a process question? Ask your project's Steward (or the Org Admin if you are the Steward).
+- Seeing behavior that might violate the Code of Conduct? Report to `conduct@powershellorg.example` or message the Org Admin directly.
+- Need to step down or take a break? Tell your project's Steward (or the Org Admin if you are the Steward) as early as possible — we would rather hand off gracefully than have a repo go dark unexpectedly.
