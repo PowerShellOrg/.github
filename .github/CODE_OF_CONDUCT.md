@@ -183,9 +183,9 @@ A person who has been subject to enforcement action may appeal the decision by
 writing to the Org Admin within 30 days. The Org Admin will review the appeal
 with input from the Council and respond within 30 days.
 
-If the appeal involves the Org Admin's own decision and the appellant believes the
-Org Admin cannot review it impartially, they may request that the Council review
-the appeal collectively. In that case, the Council reviews and decides by
+If the appeal involves the Org Admin's own decision and the appellant believes
+the Org Admin cannot review it impartially, they may request that the Council
+review the appeal collectively. In that case, the Council reviews and decides by
 majority, and the Org Admin does not vote.
 
 ## Attribution
@@ -202,4 +202,4 @@ For answers to common questions about this Code of Conduct, see the FAQ at
 
 ---
 
-*Last updated: 2026/04/21. Reports go to <Privacy@powershell.org>.*
+_Last updated: 2026/04/21. Reports go to <Privacy@powershell.org>._
