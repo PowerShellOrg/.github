@@ -26,7 +26,7 @@ Use GitHub's built-in [Private Vulnerability Reporting](https://docs.github.com/
 2. Click **Security** → **Advisories** → **Report a vulnerability**.
 3. Fill in the form with as much detail as you can provide.
 
-This creates an encrypted draft security advisory visible only to maintainers and the Steward.
+This creates an encrypted draft security advisory visible only to maintainers and the Org Admin.
 
 ### Fallback method: email
 
