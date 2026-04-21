@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Ask a question (GitHub Discussions)
+    url: https://github.com/PowerShellOrg/.github/discussions/new?category=q-a
+    about: Use Discussions for how-to questions. Issues are for bugs and feature requests only.
+
+  - name: Support guide
+    url: https://github.com/PowerShellOrg/.github/blob/main/.github/SUPPORT.md
+    about: Not sure where to go? Read our support guide first.
+
+  - name: Security vulnerability
+    url: https://github.com/PowerShellOrg/.github/blob/main/.github/SECURITY.md
+    about: Report a security issue privately — do NOT open a public issue.

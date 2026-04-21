@@ -1,0 +1,59 @@
+name: Feature Request
+description: Suggest a new feature or improvement for a PowerShellOrg module.
+title: "[Feature]: "
+labels:
+  - enhancement
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest an improvement. Before submitting, please [search existing issues and discussions](../../issues?q=is%3Aissue+label%3Aenhancement) to see if this has already been proposed.
+
+        For large or breaking changes, consider opening a Discussion first to get early feedback before investing time in a detailed proposal.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: |
+        What problem are you trying to solve? Describe the situation without assuming any particular solution.
+        Example: "When I have 50 dependency entries, I have no way to see which ones failed without parsing the verbose output manually."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe the feature or change you would like to see. Include proposed parameter names, output format, behavior, or API changes if applicable.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What other approaches or workarounds have you tried or considered? Why do they fall short?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: Willing to contribute?
+      description: Would you be willing to open a pull request implementing this feature?
+      options:
+        - "Yes — I plan to open a PR"
+        - "Maybe — I could, with guidance"
+        - "No — I am requesting someone else implement this"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Links to related issues, prior art in other tools, screenshots, or anything else that helps illustrate the request.
+    validations:
+      required: false

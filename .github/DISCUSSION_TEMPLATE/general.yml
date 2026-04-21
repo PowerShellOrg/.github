@@ -1,0 +1,16 @@
+title: ""
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the place for general conversation about PowerShellOrg and its projects.
+
+        For bug reports, use [Issues](../../issues/new/choose). For feature requests, use [Issues](../../issues/new/choose). For how-to questions, use the [Q&A category](../../discussions/new?category=q-a).
+
+  - type: textarea
+    id: discussion
+    attributes:
+      label: What's on your mind?
+    validations:
+      required: true

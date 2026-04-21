@@ -1,0 +1,41 @@
+name: Question
+description: Ask a question about using a PowerShellOrg module.
+title: "[Question]: "
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Before you open an issue
+
+        **Questions are better asked in [GitHub Discussions](../../discussions/new?category=q-a).** Discussions are searchable, so your question and its answer can help future users. Issues are reserved for tracked bugs and feature requests.
+
+        If you have already checked Discussions and still need help, you are in the right place.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: What are you trying to do, and what have you tried so far?
+    validations:
+      required: true
+
+  - type: input
+    id: module-version
+    attributes:
+      label: Module Version
+      placeholder: "e.g., 2.1.3"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: ps-version
+    attributes:
+      label: PowerShell Version
+      options:
+        - "5.1 (Windows PowerShell)"
+        - "7.x (PowerShell Core)"
+        - "Not applicable"
+    validations:
+      required: false
