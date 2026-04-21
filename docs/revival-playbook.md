@@ -8,7 +8,7 @@ The phases overlap. Do not wait for Phase 1 to be fully complete before starting
 
 ## Phase 0: Take inventory (week 1)
 
-Everything in this phase happens before or immediately after the repo transfer. It is primarily Steward and lead maintainer work.
+Everything in this phase happens before or immediately after the repo transfer. The project's Steward is confirmed at adoption and owns this phase from day one — open a tracking issue in the `.github` repo immediately after transfer and use it as the source of truth for the revival's progress. The Org Admin handles PSGallery setup; everything else is Steward-driven.
 
 ### Transfer and access
 
@@ -21,9 +21,9 @@ Everything in this phase happens before or immediately after the repo transfer. 
 ### PSGallery setup
 
 - [ ] PSGallery package ownership transferred to the PowerShellOrg PSGallery account (or new package created if publishing fresh)
-- [ ] Scoped API key created by Steward: `PowerShellOrg-<RepoName>-<YYYY-MM>`, glob = module name, 365-day expiry
+- [ ] Scoped API key created by the Org Admin: `PowerShellOrg-<RepoName>-<YYYY-MM>`, glob = module name, 365-day expiry
 - [ ] `PSGALLERY_API_KEY` Actions secret set in the repo
-- [ ] Rotation reminder added to the Steward's private tracking issue
+- [ ] Rotation reminder added to the Org Admin's private tracking issue
 
 ### Baseline metrics (capture before making changes)
 
@@ -261,7 +261,7 @@ Once Phase 4 is done, the repo transitions from `status-incoming` to `status-act
 
 - [ ] Repo topic updated from `status-incoming` to `status-active`
 - [ ] `README.md` status badge updated
-- [ ] Steward notified (they will update any org-level tracking)
+- [ ] Org Admin notified (they will update any org-level tracking)
 - [ ] Announcement posted in Council channel
 
 ### Ongoing cadence
@@ -272,7 +272,7 @@ Once Phase 4 is done, the repo transitions from `status-incoming` to `status-act
 | PR review | Within 7 days of opening |
 | Dependency review | Monthly (check for PSGallery module updates) |
 | Release | As needed; no more than 3 months between releases if there are merged changes |
-| PSGallery API key rotation | Annually (Steward-driven, maintainer confirms) |
+| PSGallery API key rotation | Annually (Org Admin-driven, Steward confirms) |
 
 ### Graduation to stable
 
