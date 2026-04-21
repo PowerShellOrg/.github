@@ -1,0 +1,26 @@
+title: "[Idea]: "
+labels:
+  - idea
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share an idea that is not yet ready for a formal feature request. This is a good place to get early feedback, gauge interest, and shape a proposal before opening an Issue.
+
+        If an idea gets strong support here, a maintainer may ask you to convert it into a Feature Request issue.
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: Describe the idea and the problem it solves.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Why now / why this?
+      description: What prompted this idea? Is there a specific workflow or gap it addresses?
+    validations:
+      required: false

@@ -1,0 +1,136 @@
+name: Tool Adoption Request
+description: Request that PowerShellOrg adopt and maintain an existing PowerShell tool.
+title: "[Adoption]: "
+labels:
+  - adoption-request
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Requesting adoption of a PowerShell tool
+
+        Thank you for your interest in bringing a tool under the PowerShellOrg umbrella. Please read [our adoption criteria](https://github.com/PowerShellOrg/.github/blob/main/docs/adoption-criteria.md) before submitting.
+
+        Adoption requests are reviewed by the Council. We aim to respond within **7 days** and make a decision within **30 days**. The process is documented in [GOVERNANCE.md](https://github.com/PowerShellOrg/.github/blob/main/.github/GOVERNANCE.md).
+
+  - type: input
+    id: tool-name
+    attributes:
+      label: Tool / Module Name
+      placeholder: "e.g., PSDepend"
+    validations:
+      required: true
+
+  - type: input
+    id: repo-url
+    attributes:
+      label: Source Repository URL
+      placeholder: "https://github.com/owner/repo"
+    validations:
+      required: true
+
+  - type: input
+    id: gallery-url
+    attributes:
+      label: PowerShell Gallery URL
+      description: Leave blank if not published to PSGallery.
+      placeholder: "https://www.powershellgallery.com/packages/ModuleName"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: license
+    attributes:
+      label: Current License
+      description: What license does the tool currently use?
+      options:
+        - MIT
+        - Apache 2.0
+        - BSD 2-Clause
+        - BSD 3-Clause
+        - GPL v2
+        - GPL v3
+        - LGPL
+        - Other OSI-approved license
+        - No license / unlicensed
+        - Unknown
+    validations:
+      required: true
+
+  - type: dropdown
+    id: submitter-relationship
+    attributes:
+      label: Your relationship to this tool
+      options:
+        - "I am the original author"
+        - "I am a current maintainer (not original author)"
+        - "I am a contributor (not current maintainer)"
+        - "I am a user with no prior contribution"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What does this tool do?
+      description: A brief description of the tool's purpose and who it is for.
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-state
+    attributes:
+      label: Current state of the project
+      description: |
+        Please fill in what you know:
+        - Last commit date and last release date
+        - Number of open issues / open PRs
+        - Any known bugs or security issues
+        - Approximate test coverage and CI status
+        - Whether the original author is reachable and aware of this request
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence-of-use
+    attributes:
+      label: Evidence of real-world use
+      description: |
+        Why should PowerShellOrg maintain this? Examples: PSGallery download counts, GitHub stars/forks, companies or projects that depend on it, forum posts or Stack Overflow questions, prominent users.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: original-author-status
+    attributes:
+      label: Original author status
+      description: Do you know whether the original author is aware of and supportive of this adoption request?
+      options:
+        - "Yes — author has been contacted and is supportive"
+        - "Yes — author has been contacted and has no objection"
+        - "Author is unresponsive / unreachable (please describe in additional notes)"
+        - "Author is unknown"
+        - "I am the original author"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: post-adoption-commitment
+    attributes:
+      label: Post-adoption maintainer commitment
+      description: If PowerShellOrg adopts this tool, are you willing to serve as a maintainer?
+      options:
+        - "Yes — I commit to at least 6 months of active maintenance"
+        - "Maybe — I can help but cannot commit to full maintainer responsibilities"
+        - "No — I am requesting adoption only and cannot maintain it"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: Additional notes
+      description: Anything else the Council should know — history of the project, why it went unmaintained, alternative tools considered, potential concerns.
+    validations:
+      required: false
