@@ -56,7 +56,7 @@ jobs:
 
 ## Governance
 
-See [`GOVERNANCE.md`](.github/GOVERNANCE.md) for the full governance model. The short version: Gilbert Sanchez is the Steward; the Council is all active maintainers; decisions default to the Steward with a 72-hour silent-assent window for non-urgent changes.
+See [`GOVERNANCE.md`](.github/GOVERNANCE.md) for the full governance model. The short version: the Org Admin holds org-wide authority; each adopted project has its own Steward who drives it day-to-day; the Council is all active Stewards plus invited members; the 72-hour silent-assent window applies to both.
 
 ## License
 
