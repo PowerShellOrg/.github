@@ -72,7 +72,7 @@ The Org Admin then:
 ### Maintainer steps
 
 - [ ] Confirm with the Org Admin that `PSGALLERY_API_KEY` is set in the repo's Actions secrets (**Settings** → **Secrets and variables** → **Actions**)
-- [ ] Note the key expiration month — the Steward will initiate rotation, but you may be asked to trigger it
+- [ ] Note the key expiration month — the Org Admin will initiate rotation, but you may be asked to trigger it
 
 ### Key rotation
 
