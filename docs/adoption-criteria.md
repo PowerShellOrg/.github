@@ -60,6 +60,14 @@ The tool must not carry legal risks that would expose PowerShellOrg or its maint
 - Trademark issues
 - Export control restrictions
 
+### 7. A committed Steward has been identified
+
+No Steward, no adoption.
+
+Every adoption request must name a person who has agreed to serve as the project's Steward after transfer. The Steward does not need to be the submitter, but someone must have explicitly committed to the role before the adoption is approved.
+
+If no Steward can be confirmed at decision time, the adoption is deferred — not declined. The request remains open while a Steward is sought.
+
 ---
 
 ## What PowerShellOrg commits to
@@ -67,7 +75,7 @@ The tool must not carry legal risks that would expose PowerShellOrg or its maint
 When we adopt a tool, we commit to:
 
 1. **Maintaining it actively** — responding to issues within our SLA, reviewing PRs, and cutting releases when there are meaningful changes
-2. **Not abandoning it silently** — if we decide we cannot maintain a tool, we will announce it publicly and give the community 90 days to find alternative stewardship before archiving
+2. **Not abandoning it silently** — if a project loses its Steward, we enter a 30-day vacancy window and, if no replacement is found, move the project to `status-paused` rather than archiving it immediately. A paused project can resume when a new Steward steps up. Extended vacancies (90 days) may lead to the normal archival process
 3. **Keeping it open source** — the tool will remain under its existing OSI license (or a compatible one with explicit permission)
 4. **Not breaking the API or CLI interface without a major version bump** — we respect existing users' scripts and pipelines
 5. **Giving credit** — the original author's contributions remain in git history and are acknowledged in the CHANGELOG and package metadata
@@ -77,16 +85,26 @@ When we adopt a tool, we commit to:
 
 ## What the submitter commits to
 
-Adoption requests that do not include a maintainer commitment are evaluated more skeptically. A tool with no one willing to maintain it is a higher-risk adoption.
+Every submitter is asked to indicate whether they will serve as the project's **Steward**, as a **co-maintainer**, or neither. The commitment differs significantly between the two roles.
 
-If you are submitting a request and are willing to maintain the tool:
+### If you are serving as Steward
+
+The Steward commitment is heavier than a standard maintainer commitment. You are committing to:
+
+1. **Driving the revival playbook** — you own the tracking issue and the checklist through to the first clean release
+2. **Project direction** — you make the final call on contested project-level decisions and are the project's public face
+3. **At least 12 months of active stewardship** — the 6-month minimum applies to co-maintainers; as Steward you are expected to see the project through to `status-active` and at least to the first graduation evaluation
+4. **Transparency about limitations** — if you know the tool has problems, document them upfront
+5. **Early notice if you need to step down** — your departure triggers a 30-day vacancy window; the earlier we know, the better for the project
+
+### If you are serving as co-maintainer (not Steward)
 
 1. **Minimum 6 months of active maintenance** — you will triage issues, review PRs, and be reachable for at least 6 months after adoption
 2. **On-boarding and knowledge transfer** — you will work with the PowerShellOrg maintainer team to document the tool's internals, known issues, and quirks before stepping back
 3. **Good-faith participation** — you will engage with the community, respond to review comments, and follow PowerShellOrg's contribution norms
 4. **Transparency about limitations** — if you know the tool has problems, you will document them upfront rather than letting us discover them post-adoption
 
-We understand life happens. If you need to step back before the 6 months are up, tell us early — we will work with you.
+We understand life happens. If you need to step back before your commitment is up, tell the project's Steward (or the Org Admin if you are the Steward) early — we will work with you.
 
 ---
 
@@ -95,11 +113,11 @@ We understand life happens. If you need to step back before the 6 months are up,
 | Step | Owner | Timeline |
 |---|---|---|
 | Submitter files a Tool Adoption Request | Submitter | — |
-| Steward acknowledges the request and assigns it to the Council | Steward | 7 days |
+| Org Admin acknowledges the request and assigns it to the Council | Org Admin | 7 days |
 | Council members review and comment | Council | 30 days |
-| Steward makes a decision (adopt / decline / defer) | Steward | 30 days from submission |
-| If adopted: repo transfer initiated, onboarding begins | Steward + submitter | Week of decision |
-| Repo moves to `status-incoming`, Revival Playbook begins | Lead maintainer | Immediately after transfer |
+| Org Admin makes a decision (adopt / decline / defer), confirming the Steward as part of adoption | Org Admin | 30 days from submission |
+| If adopted: repo transfer initiated, onboarding begins | Org Admin + submitter | Week of decision |
+| Repo moves to `status-incoming`, Revival Playbook begins | Steward | Immediately after transfer |
 
 ### What "declined" means
 
