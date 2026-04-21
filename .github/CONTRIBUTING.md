@@ -101,8 +101,9 @@ Fill out the PR template completely. PRs with empty templates or no linked issue
 |---|---|---|
 | `status-active` | 7 days | 30 days |
 | `status-stable` | 30 days | 60 days |
+| `status-paused` | Suspended; security issues only, best-effort | — |
 
-SLAs are best-effort commitments, not guarantees. If a repo is understaffed, the Steward will note this in the repo's README.
+SLAs are best-effort commitments, not guarantees. If a repo is understaffed, the project's Steward will note this in the repo's README.
 
 If a PR sits without response past the SLA, ping `@PowerShellOrg/maintainers` or open a discussion.
 

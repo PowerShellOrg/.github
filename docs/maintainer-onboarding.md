@@ -148,5 +148,5 @@ PSGallery API key issuance is an Org Admin action regardless of your Steward sta
 
 - Blocked by a technical question? Post in the Council channel — another maintainer may know the answer.
 - Blocked by a process question? Ask your project's Steward (or the Org Admin if you are the Steward).
-- Seeing behavior that might violate the Code of Conduct? Report to `conduct@powershellorg.example` or message the Org Admin directly.
+- Seeing behavior that might violate the Code of Conduct? Report to <Privacy@powershell.org> or message the Org Admin directly.
 - Need to step down or take a break? Tell your project's Steward (or the Org Admin if you are the Steward) as early as possible — we would rather hand off gracefully than have a repo go dark unexpectedly.
