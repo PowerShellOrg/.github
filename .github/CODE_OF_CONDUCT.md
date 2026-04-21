@@ -118,7 +118,7 @@ to address harm, support those affected, and where possible find a path for the
 person who caused harm to repair the relationship and reintegrate into the
 community.
 
-The following is a guideline. The Steward retains discretion to apply responses
+The following is a guideline. The Org Admin retains discretion to apply responses
 appropriate to the specific situation, including responses not listed here.
 
 ### 1. Private Conversation
