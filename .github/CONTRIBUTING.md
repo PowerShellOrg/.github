@@ -58,7 +58,7 @@ Invoke-psake Clean     # Remove build artifacts
 Invoke-psake Build     # Compile / stage the module
 Invoke-psake Test      # Run Pester tests
 Invoke-psake Analyze   # Run PSScriptAnalyzer
-Invoke-psake Publish   # Publish to PSGallery (maintainers only)
+Invoke-psake Publish   # Publish to PSGallery (CI only — never run manually)
 ```
 
 Run `Invoke-psake ?` to see all available tasks and their descriptions.

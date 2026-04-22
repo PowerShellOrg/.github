@@ -27,8 +27,10 @@ to be fully operational on day one and productive in the first week.
 ### PSGallery account
 
 - [ ] Confirm you have a [PowerShell Gallery] account
-- [ ] Share your PSGallery username with the Org Admin — you will need it for
-      the API key issuance step below
+
+Note: you do not need personal PSGallery publishing credentials. All releases go
+through GitHub Actions CI using a scoped API key stored in the repo's Actions
+secrets. You never run `Invoke-psake Publish` locally.
 
 ---
 
@@ -68,40 +70,42 @@ anything.
 PowerShellOrg uses **per-repo scoped API keys** for PSGallery. You do not get an
 org-wide key.
 
-### Key issuance process (Org Admin action)
+### Key issuance process (Org Admin or Council action)
 
-The Org Admin creates the key with these parameters:
+The Org Admin or a Council member creates the key with these parameters:
 
-| Parameter    | Value                                                                         |
-| ------------ | ----------------------------------------------------------------------------- |
+| Parameter    | Value                                                                          |
+| ------------ | ------------------------------------------------------------------------------ |
 | Key name     | `PowerShellOrg-<RepoName>-<YYYY-MM>` (e.g., `PowerShellOrg-PSDepend-2025-11`) |
-| Glob pattern | The module name exactly (e.g., `PSDepend`)                                    |
-| Expiration   | 365 days (the PSGallery maximum)                                              |
+| Glob pattern | The module name exactly (e.g., `PSDepend`)                                     |
+| Expiration   | 365 days (the PSGallery maximum)                                               |
 
-The Org Admin then:
+They then:
 
-1. Creates or updates the `PSGALLERY_API_KEY` Actions secret in the repo
-2. Adds a rotation reminder to the private key tracking issue (pinned to this
-   repo)
-3. Notifies the maintainer that the key is in place
+1. Set the `PSGALLERY_API_KEY` Actions secret in the repo
+2. Add a rotation reminder to the Org Admin's private tracking issue
+3. Notify the maintainer that the key is in place
 
 ### Maintainer steps
 
-- [ ] Confirm with the Org Admin that `PSGALLERY_API_KEY` is set in the repo's
-      Actions secrets (**Settings** → **Secrets and variables** → **Actions**)
-- [ ] Note the key expiration month — the Org Admin will initiate rotation, but
-      you may be asked to trigger it
+- [ ] Confirm that `PSGALLERY_API_KEY` is set in the repo's Actions secrets
+      (**Settings** → **Secrets and variables** → **Actions**)
+- [ ] Run a test release (pre-release tag) to verify the workflow succeeds
+      end-to-end
+
+If the release workflow ever fails with an authentication error, the key may
+have expired — notify the Org Admin or Council; do not attempt to create or
+rotate the key yourself.
 
 ### Key rotation
 
 Keys expire after 365 days. The Org Admin tracks rotation in a private pinned
-issue. When rotation is due:
+issue. When rotation is due, the Org Admin or a Council member:
 
-1. Org Admin creates a new key on PSGallery with the same glob, new `YYYY-MM`
-   suffix in the name
-2. Org Admin updates the `PSGALLERY_API_KEY` secret in the repo
-3. Old key is deleted from PSGallery
-4. Tracking issue is updated
+1. Creates a new key on PSGallery with the same glob, new `YYYY-MM` suffix
+2. Updates the `PSGALLERY_API_KEY` secret in the repo
+3. Deletes the old key from PSGallery
+4. Updates the tracking issue
 
 ---
 

@@ -30,7 +30,7 @@ PSGallery setup; everything else is Steward-driven.
 
 - [ ] PSGallery package ownership transferred to the PowerShellOrg PSGallery
       account (or new package created if publishing fresh)
-- [ ] Scoped API key created by the Org Admin:
+- [ ] Scoped API key created by the Org Admin or a Council member:
       `PowerShellOrg-<RepoName>-<YYYY-MM>`, glob = module name, 365-day expiry
 - [ ] `PSGALLERY_API_KEY` Actions secret set in the repo
 - [ ] Rotation reminder added to the Org Admin's private tracking issue
