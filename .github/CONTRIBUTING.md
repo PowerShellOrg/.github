@@ -126,8 +126,8 @@ you want the full review pass.
 SLAs are best-effort commitments, not guarantees. If a repo is understaffed, the
 project's Steward will note this in the repo's README.
 
-If a PR sits without response past the SLA, ping `@PowerShellOrg/maintainers` or
-open a discussion.
+If a PR sits without response past the SLA, open a discussion on the relevant
+repository.
 
 ---
 
