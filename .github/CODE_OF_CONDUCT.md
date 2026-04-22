@@ -92,7 +92,7 @@ report it. You will not be retaliated against for making a good-faith report.
 
 **Primary contact:** <Privacy@powershell.org>
 
-**Alternate contact:** Direct message to the Steward via GitHub or Discord.
+**Alternate contact:** Direct message to the Org Admin via GitHub or Discord.
 
 When reporting, please include:
 
@@ -112,13 +112,13 @@ required by law.
 
 ## Addressing and Repairing Harm
 
-When a Code of Conduct violation is reported, the Steward (with input from the
+When a Code of Conduct violation is reported, the Org Admin (with input from the
 Council where appropriate) will determine an appropriate response. Our goal is
 to address harm, support those affected, and where possible find a path for the
 person who caused harm to repair the relationship and reintegrate into the
 community.
 
-The following is a guideline. The Steward retains discretion to apply responses
+The following is a guideline. The Org Admin retains discretion to apply responses
 appropriate to the specific situation, including responses not listed here.
 
 ### 1. Private Conversation
@@ -126,7 +126,7 @@ appropriate to the specific situation, including responses not listed here.
 **Community impact:** Use of inappropriate language, a single instance of
 unprofessional behavior, or behavior that, while not severe, was unwelcome.
 
-**Response:** A private written communication from the Steward, providing
+**Response:** A private written communication from the Org Admin, providing
 clarity around the nature of the violation and an explanation of why the
 behavior was inappropriate. A public apology may be requested.
 
@@ -165,7 +165,7 @@ community.
 
 ## Restorative Paths
 
-Where appropriate, and at the discretion of the Steward and the affected
+Where appropriate, and at the discretion of the Org Admin and the affected
 parties, we may offer paths for community members who have caused harm to repair
 the relationship and re-engage with the community. This may include:
 
@@ -180,13 +180,13 @@ limited to harassment, doxxing, threats of violence, or sexual misconduct.
 ## Appeals
 
 A person who has been subject to enforcement action may appeal the decision by
-writing to the Steward within 30 days. The Steward will review the appeal with
-input from the Council and respond within 30 days.
+writing to the Org Admin within 30 days. The Org Admin will review the appeal
+with input from the Council and respond within 30 days.
 
-If the appeal involves the Steward's own decision and the appellant believes the
-Steward cannot review it impartially, they may request that the Council review
-the appeal collectively. In that case, the Council reviews and decides by
-majority, and the Steward does not vote.
+If the appeal involves the Org Admin's own decision and the appellant believes
+the Org Admin cannot review it impartially, they may request that the Council
+review the appeal collectively. In that case, the Council reviews and decides by
+majority, and the Org Admin does not vote.
 
 ## Attribution
 
@@ -202,4 +202,4 @@ For answers to common questions about this Code of Conduct, see the FAQ at
 
 ---
 
-*Last updated: 2026/04/21. Reports go to <Privacy@powershell.org>.*
+_Last updated: 2026/04/21. Reports go to <Privacy@powershell.org>._

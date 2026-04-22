@@ -127,6 +127,32 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: steward-commitment
+    attributes:
+      label: Who will serve as Steward for this project?
+      description: >
+        Every adopted project must have a committed Steward — someone who owns the project's direction
+        and drives the revival playbook. This is a heavier commitment than co-maintainer. See the
+        adoption criteria for the full Steward commitment.
+      options:
+        - "I will be the Steward"
+        - "Another named person has committed (provide details in the field below)"
+        - "I'm hoping someone on the Council will volunteer"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steward-details
+    attributes:
+      label: Named Steward details
+      description: >
+        If you selected "Another named person has committed" above, provide their name and GitHub
+        handle here. Leave blank otherwise.
+      placeholder: "Name: \nGitHub handle: @"
+    validations:
+      required: false
+
   - type: textarea
     id: additional-notes
     attributes:

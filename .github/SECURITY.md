@@ -2,15 +2,19 @@
 
 ## Supported versions
 
-By default, PowerShellOrg supports the **latest minor release of the latest major version** of each module. Individual repositories may define a broader support window in their own `SECURITY.md`; where they do, the repo-level policy takes precedence over this document.
+By default, PowerShellOrg supports the **latest minor release of the latest
+major version** of each module. Individual repositories may define a broader
+support window in their own `SECURITY.md`; where they do, the repo-level policy
+takes precedence over this document.
 
-| Version policy | Receives security fixes? |
-|---|---|
-| Latest release | Yes |
+| Version policy              | Receives security fixes?                 |
+| --------------------------- | ---------------------------------------- |
+| Latest release              | Yes                                      |
 | Previous minor (same major) | Best-effort; patch may not be backported |
-| Older majors | No |
+| Older majors                | No                                       |
 
-If you are unsure whether a version is covered, open a discussion or check the repo's own `SECURITY.md`.
+If you are unsure whether a version is covered, open a discussion or check the
+repo's own `SECURITY.md`.
 
 ---
 
@@ -20,21 +24,21 @@ If you are unsure whether a version is covered, open a discussion or check the r
 
 ### Preferred method: GitHub Private Vulnerability Reporting
 
-Use GitHub's built-in [Private Vulnerability Reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability) on the affected repository:
+Use GitHub's built-in [Private Vulnerability
+Reporting][private-vulnerability-reporting] on the affected repository:
 
 1. Navigate to the repository on GitHub.
 2. Click **Security** → **Advisories** → **Report a vulnerability**.
 3. Fill in the form with as much detail as you can provide.
 
-This creates an encrypted draft security advisory visible only to maintainers and the Steward.
+This creates an encrypted draft security advisory visible only to maintainers
+and the Org Admin.
 
 ### Fallback method: email
 
 If GitHub Private Vulnerability Reporting is unavailable or you prefer email:
 
-**`security@powershellorg.example`** — `<FILL IN: replace with real address before publishing>`
-
-Encrypt your report with our PGP key if possible: `<FILL IN: PGP key fingerprint or link, or remove this line if not using PGP>`
+**<privacy@powershell.org>**
 
 ### What to include
 
@@ -52,13 +56,13 @@ A useful report includes:
 
 Once we receive your report:
 
-| Milestone | Target |
-|---|---|
-| Acknowledge receipt | 72 hours |
-| Provide a status update | 7 days |
-| Deliver fix or mitigation for **critical** severity | 14 days |
-| Deliver fix or mitigation for **high** severity | 30 days |
-| Deliver fix or mitigation for **medium/low** severity | 90 days |
+| Milestone                                             | Target   |
+| ----------------------------------------------------- | -------- |
+| Acknowledge receipt                                   | 72 hours |
+| Provide a status update                               | 7 days   |
+| Deliver fix or mitigation for **critical** severity   | 14 days  |
+| Deliver fix or mitigation for **high** severity       | 30 days  |
+| Deliver fix or mitigation for **medium/low** severity | 90 days  |
 
 These are targets, not guarantees. If we need more time, we will tell you why.
 
@@ -70,10 +74,13 @@ We follow a coordinated disclosure model:
 
 1. Reporter submits the vulnerability privately.
 2. Maintainers validate and develop a fix.
-3. We agree on an embargo period (typically 14–90 days depending on severity and fix complexity).
+3. We agree on an embargo period (typically 14–90 days depending on severity and
+   fix complexity).
 4. A patched release is published.
-5. A GitHub Security Advisory is published, credited to the reporter unless they prefer to remain anonymous.
-6. For serious vulnerabilities we will request a CVE from a CNA; this typically happens at or before public disclosure.
+5. A GitHub Security Advisory is published, credited to the reporter unless they
+   prefer to remain anonymous.
+6. For serious vulnerabilities we will request a CVE from a CNA; this typically
+   happens at or before public disclosure.
 
 We ask that reporters:
 
@@ -93,15 +100,22 @@ In return, we commit to:
 
 The following are generally not in scope for security reports:
 
-- Vulnerabilities in PowerShell itself, the .NET runtime, or Windows — report those to Microsoft
-- Issues that require the attacker to already have administrative or write access to the affected system
+- Vulnerabilities in PowerShell itself, the .NET runtime, or Windows — report
+  those to Microsoft
+- Issues that require the attacker to already have administrative or write
+  access to the affected system
 - Denial-of-service attacks that require significant resources from the attacker
 - Social engineering of maintainers or contributors
 
-If you are unsure whether your finding is in scope, report it anyway — we would rather review a borderline finding than miss a real one.
+If you are unsure whether your finding is in scope, report it anyway — we would
+rather review a borderline finding than miss a real one.
 
 ---
 
 ## Questions
 
-General security questions (not vulnerability reports) can be asked in GitHub Discussions on the relevant repository.
+General security questions (not vulnerability reports) can be asked in GitHub
+Discussions on the relevant repository.
+
+[private-vulnerability-reporting]:
+  https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability
