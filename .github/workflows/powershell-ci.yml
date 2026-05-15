@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # PS 5.1 needs TLS 1.2 forced and the NuGet provider bootstrapped before
       # PowerShellGet will talk to PSGallery reliably.
@@ -81,7 +81,7 @@ jobs:
         run: Invoke-psake Analyze
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results-${{ matrix.os }}-ps${{ matrix.ps-version }}
