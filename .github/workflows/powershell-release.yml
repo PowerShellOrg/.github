@@ -1,5 +1,3 @@
-name: PowerShell Release
-
 # Reusable workflow. Call from a tag-triggered workflow in a consuming repo:
 #
 #   on:
@@ -19,88 +17,171 @@ name: PowerShell Release
 #
 # Task names are fixed convention: Init, Build, Test, Analyze, Publish
 # The Publish task must read $env:PSGALLERY_API_KEY.
+# spell-checker:ignore BHPS PSGALLERY pwsh
+name: Publish Module
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
 
 on:
   workflow_call:
     inputs:
-      module-name:
-        description: "Module name as it appears on PSGallery (e.g. PSDepend)"
-        required: true
-        type: string
-      create-github-release:
-        description: "Create a GitHub Release with auto-generated notes after publish"
+      version:
+        description: "The version to publish. Leave empty to use the version in the module manifest."
         required: false
+        type: string
+      isPrerelease:
+        description: "Is this a prerelease version?"
+        required: false
+        default: false
         type: boolean
+      dry_run:
+        type: boolean
+        description: "If true, skip actual publishing and just validate the workflow logic."
+        required: false
+        default: false
+      create_release:
+        type: boolean
+        description: "If false, skip creating the GitHub release and tag."
+        required: false
+        default: true
+      publish:
+        type: boolean
+        description: "If false, skip publishing to PowerShell Gallery."
+        required: false
         default: true
     secrets:
-      PSGALLERY_API_KEY:
-        description: "Scoped PSGallery API key for this module. See docs/maintainer-onboarding.md."
+      PS_GALLERY_KEY:
+        description: "The API key for publishing to the PowerShell Gallery."
         required: true
 
 jobs:
-  release:
-    name: Release ${{ inputs.module-name }}
+  check_version:
+    name: Check Version
+    timeout-minutes: 15
     runs-on: windows-latest
-
+    outputs:
+      version_bumped: ${{ steps.check_if_versions_bumped.outputs.BUMPED }}
+      module_name: ${{ steps.check_if_versions_bumped.outputs.MODULE_NAME }}
+      new_version: ${{ steps.check_if_versions_bumped.outputs.NEW_VERSION }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
 
-      - name: Install build dependencies
+      - name: Bootstrap
+        shell: pwsh
+        run: ./build.ps1 -Task 'Init' -Bootstrap
+
+      - name: Check if version is already published
+        id: check_if_versions_bumped
         shell: pwsh
         run: |
-          $ErrorActionPreference = 'Stop'
-          $installParams = @{
-            Scope              = 'CurrentUser'
-            Force              = $true
-            SkipPublisherCheck = $true
+          Import-Module BuildHelpers
+          Set-BuildEnvironment -Force
+          [version]$githubVersion = Get-MetaData -Path $env:BHPSModuleManifest -PropertyName 'ModuleVersion' -ErrorAction 'Stop'
+          Write-Host "Current Version: $githubVersion"
+
+          # Override version if specified as input
+          if (-not [String]::IsNullOrEmpty('${{ inputs.version }}')) {
+            # Split version and prerelease suffix if present
+            if('${{ inputs.version }}' -match '^(?<version>\d+\.\d+\.\d+)(-(?<prerelease>.+))?$') {
+              $githubVersion = [version]$matches['version']
+              if ($matches['prerelease']) {
+                $prereleaseSuffix = $matches['prerelease']
+              }
+            } else {
+              Write-Warning "Invalid version format: '${{ inputs.version }}'. Expected format: '1.2.3' or '1.2.3-beta'"
+            }
+            Write-Host "Module version was specified in workflow: $githubVersion"
+            Update-MetaData -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $githubVersion -ErrorAction 'Stop'
           }
-          Install-Module -Name psake            @installParams
-          Install-Module -Name PowerShellBuild  @installParams
-          Install-Module -Name PSScriptAnalyzer @installParams
-          Install-Module -Name Pester           @installParams -MinimumVersion '5.0' -MaximumVersion '5.99'
 
-      - name: Init
-        shell: pwsh
-        run: Invoke-psake Init
+          $moduleSplat = @{
+            Name = $env:BHProjectName
+          }
 
-      - name: Test
-        shell: pwsh
-        run: Invoke-psake Test
+          # Handle pre-release versions
+          $isPrerelease = '${{ inputs.isPrerelease }}' -eq 'true'
+          Write-Host "Prerelease: $isPrerelease"
+          if ($isPrerelease) {
+            $PSData = Get-MetaData -Path $env:BHPSModuleManifest -PropertyName PrivateData.PSData -ErrorAction 'Stop'
+            $moduleSplat['AllowPrerelease'] = $true
+            $moduleSplat['RequiredVersion'] = "$githubVersion-$($PSData.Prerelease)"
+          } else {
+            $moduleSplat['AllowPrerelease'] = $false
+            $moduleSplat['RequiredVersion'] = $githubVersion
+          }
+          Write-Host "Version to Publish: $($moduleSplat.RequiredVersion)"
 
-      - name: Analyze
-        shell: pwsh
-        run: Invoke-psake Analyze
+          # Check if exact version exists in PSGallery
+          try {
+            $existingModule = Find-Module @moduleSplat -ErrorAction Stop
+            $bumped = $false
+            Write-Host "Version $($moduleSplat.RequiredVersion) already exists in PSGallery - skipping publish"
+          } catch {
+            if ($_.CategoryInfo.Category -eq 'ObjectNotFound') {
+              $bumped = $true
+              Write-Host "Version $($moduleSplat.RequiredVersion) not found in PSGallery - will publish"
+            } else {
+              Write-Warning "Failed to check existing version: $($_.Exception.Message)"
+              $bumped = $false
+            }
+          }
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
+          # Strip prerelease suffix for changelog lookup
+          $versionForChangelog = "$($moduleSplat.RequiredVersion)" -replace '-.*$', ''
+
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "BUMPED=$bumped" -Confirm:$false -Encoding UTF8
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "MODULE_NAME=$env:BHProjectName" -Confirm:$false -Encoding UTF8
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "NEW_VERSION=$($moduleSplat.RequiredVersion)" -Confirm:$false -Encoding UTF8
+
+  create_release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs:
+      - check_version
+    if: needs.check_version.outputs.version_bumped == 'True' && inputs.create_release
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read and validate changelog (keepachangelog)
+        id: changelog
+        uses: mindsers/changelog-reader-action@v2
         with:
-          name: release-test-results
-          path: |
-            **/testResults.xml
-            **/TestResults.xml
-            output/testResults*.xml
-          if-no-files-found: warn
+          validation_level: warn
+          version: ${{ needs.check_version.outputs.new_version }}
+          path: ./CHANGELOG.md
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.check_version.outputs.new_version }}
+          name: Release ${{ steps.changelog.outputs.version }}
+          body: ${{ steps.changelog.outputs.changes }}
+          prerelease: ${{ steps.changelog.outputs.status == 'prereleased' }}
+          draft: ${{ steps.changelog.outputs.status == 'unreleased' }}
 
-      - name: Build
-        shell: pwsh
-        run: Invoke-psake Build
-
+  publish:
+    name: Publish Module
+    runs-on: windows-latest
+    needs:
+      - check_version
+    if: needs.check_version.outputs.version_bumped == 'True' && inputs.publish
+    steps:
+      - uses: actions/checkout@v4
       - name: Publish to PSGallery
         shell: pwsh
         env:
-          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
-        run: Invoke-psake Publish
-
-      - name: Create GitHub Release
-        if: ${{ inputs.create-github-release }}
-        env:
-          GH_TOKEN: ${{ github.token }}
+          PSGALLERY_API_KEY: ${{ secrets.PS_GALLERY_KEY }}
+          PACKAGE: ${{ needs.check_version.outputs.module_name }}
+          VERSION: ${{ needs.check_version.outputs.new_version }}
+          DRY_RUN: ${{ inputs.dry_run || false }}
         run: |
-          gh release create "${{ github.ref_name }}" `
-            --title "${{ inputs.module-name }} ${{ github.ref_name }}" `
-            --generate-notes `
-            --verify-tag
+          if ($env:DRY_RUN -eq 'true') {
+            Write-Host "DRY RUN: Would publish module to PSGallery"
+            Write-Host "Module: $env:PACKAGE"
+            Write-Host "Version: $env:VERSION"
+            exit 0
+          }
+          ./build.ps1 -Task 'Publish' -Bootstrap
