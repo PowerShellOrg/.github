@@ -5,12 +5,16 @@ open-source PowerShell tools that would otherwise go unmaintained.
 
 ## Maintained tools
 
-| Module               | Description                                                           | Status                   | Steward         |
-| -------------------- | --------------------------------------------------------------------- | ------------------------ | --------------- |
-| [Plaster][plaster]   | Template-based scaffolding engine for PowerShell projects and modules | ![Active][status-active] | James Petty     |
-| [PSDepend][psdepend] | Dependency management for PowerShell scripts and modules              | ![Active][status-active] | Gilbert Sanchez |
+| Module               | Description                                                           | Status                   | Steward                                             |
+| -------------------- | --------------------------------------------------------------------- | ------------------------ | --------------------------------------------------- |
+| [Plaster][plaster]   | Template-based scaffolding engine for PowerShell projects and modules | ![Active][status-active] | [James Petty](https://github.com/psjamesp)          |
+| [PSDepend][psdepend] | Dependency management for PowerShell scripts and modules              | ![Active][status-active] | [Gilbert Sanchez](https://github.com/HeyItsGilbert) |
 
-**Status legend:** ![Active][status-active] actively maintained · ![Stable][status-stable] stable, reduced cadence · ![Paused][status-paused] Steward vacancy in progress · ![Archived][status-archived] read-only
+**Status legend:**
+- ![Active][status-active] actively maintained
+- ![Stable][status-stable] stable, reduced cadence
+- ![Paused][status-paused] Steward vacancy in progress
+- ![Archived][status-archived] read-only
 
 ## Want us to adopt your tool?
 
