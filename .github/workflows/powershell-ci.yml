@@ -14,79 +14,72 @@ on:
   workflow_call: {}
 
 jobs:
-  ci:
-    name: PS ${{ matrix.ps-version }} / ${{ matrix.os }}
+  lint:
+    name: Run Linters
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: streetsidesoftware/cspell-action@v6
+        with:
+          strict: false
+          suggestions: true
+          incremental_files_only: true
+      - shell: pwsh
+        name: Apply PSScriptAnalyzer Fixes
+        run: Invoke-ScriptAnalyzer . -Fix
+      - name: PSScriptAnalyzer Fixes
+        uses: reviewdog/action-suggester@v1.21.0
+        with:
+          tool_name: "PSScriptAnalyzer"
+  test_pwsh:
+    name: Run Tests
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          # Windows PowerShell 5.1 — only available on Windows runners
-          - os: windows-latest
-            ps-version: "5.1"
-            shell: powershell
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    steps:
 
-          # PowerShell 7.x — all three platforms
-          - os: windows-latest
-            ps-version: "7.x"
-            shell: pwsh
-
-          - os: ubuntu-latest
-            ps-version: "7.x"
-            shell: pwsh
-
-          - os: macos-latest
-            ps-version: "7.x"
-            shell: pwsh
+      - uses: actions/checkout@v6
+      - name: Test
+        shell: pwsh
+        run: ./build.ps1 -Task Test -Bootstrap
+      - name: Upload Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unit Test Results (OS ${{ matrix.os }})
+          path: ./tests/out/testResults.xml
+  test_powershell:
+    name: Run Tests (PowerShell 5.1)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test
+        shell: powershell
+        run: ./build.ps1 -Task Test -Bootstrap
+      - name: Upload Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: Unit Test Results (OS Windows PowerShell 5.1)
+          path: ./tests/out/testResults.xml
+  publish-test-results:
+    name: "Publish Unit Tests Results"
+    needs:
+      - test_pwsh
+      - test_powershell
+    runs-on: ubuntu-latest
+    # the test job might be skipped, we don't need to run this job then
+    if: success() || failure()
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      # PS 5.1 needs TLS 1.2 forced and the NuGet provider bootstrapped before
-      # PowerShellGet will talk to PSGallery reliably.
-      - name: Bootstrap NuGet provider (PS 5.1 only)
-        if: matrix.ps-version == '5.1'
-        shell: powershell
-        run: |
-          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-          Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser
-          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-
-      - name: Install build dependencies
-        shell: ${{ matrix.shell }}
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $installParams = @{
-            Scope              = 'CurrentUser'
-            Force              = $true
-            SkipPublisherCheck = $true
-          }
-          Install-Module -Name psake            @installParams
-          Install-Module -Name PowerShellBuild  @installParams
-          Install-Module -Name PSScriptAnalyzer @installParams
-          Install-Module -Name Pester           @installParams -MinimumVersion '5.0' -MaximumVersion '5.99'
-
-      - name: Run psake Init
-        shell: ${{ matrix.shell }}
-        run: Invoke-psake Init
-        continue-on-error: false
-
-      - name: Run tests
-        shell: ${{ matrix.shell }}
-        run: Invoke-psake Test
-
-      - name: Run static analysis
-        shell: ${{ matrix.shell }}
-        run: Invoke-psake Analyze
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v7
-        if: always()
+      - name: Download Artifacts
+        uses: actions/download-artifact@v7
         with:
-          name: test-results-${{ matrix.os }}-ps${{ matrix.ps-version }}
-          path: |
-            **/testResults.xml
-            **/TestResults.xml
-            output/testResults*.xml
-          if-no-files-found: warn
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: artifacts/**/*.xml

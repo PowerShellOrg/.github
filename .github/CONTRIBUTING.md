@@ -43,6 +43,12 @@ All PowerShellOrg projects use the same build stack:
 
 **Install build dependencies:**
 
+You can typically install these with:
+
+```powershell
+.\build.ps1 -Task Init -Bootstrap
+```
+
 ```powershell
 Install-Module psake             -Scope CurrentUser -Force
 Install-Module PowerShellBuild   -Scope CurrentUser -Force
@@ -64,7 +70,7 @@ Invoke-psake Publish   # Publish to PSGallery (CI only — never run manually)
 Run `Invoke-psake ?` to see all available tasks and their descriptions.
 
 **Target platforms:** Windows PowerShell 5.1 and PowerShell 7.x on Windows,
-Linux, and macOS. Write code that runs on all six combinations.
+Linux, and macOS. Write code that runs on all four combinations.
 
 ---
 
@@ -89,8 +95,7 @@ Linux, and macOS. Write code that runs on all six combinations.
 
 Before opening a PR:
 
-- [ ] `Invoke-psake Test` passes locally on at least one platform
-- [ ] `Invoke-psake Analyze` passes with no new warnings
+- [ ] `.\build -Task Test` passes locally on at least one platform
 - [ ] New behavior has Pester test coverage
 - [ ] `CHANGELOG.md` is updated for user-facing changes
 - [ ] Docs are updated if behavior changed
@@ -106,7 +111,7 @@ you want the full review pass.
 
 ## Code review expectations
 
-### For contributors
+### For [contributors](https://github.com/PowerShellOrg/.github/blob/main/.github/GOVERNANCE.md#contributor)
 
 - Respond to review comments within **14 days**. If you need more time, say so —
   we will wait.
@@ -115,7 +120,7 @@ you want the full review pass.
 - A maintainer will make the final call. Disagreements are discussed, not
   escalated.
 
-### For maintainers
+### For [maintainers](https://github.com/PowerShellOrg/.github/blob/main/.github/GOVERNANCE.md#maintainer-per-repository)
 
 | Repo status     | First response SLA                           | Review completion SLA |
 | --------------- | -------------------------------------------- | --------------------- |
