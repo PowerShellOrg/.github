@@ -69,7 +69,10 @@ jobs:
       module_name: ${{ steps.check_if_versions_bumped.outputs.MODULE_NAME }}
       new_version: ${{ steps.check_if_versions_bumped.outputs.NEW_VERSION }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Bootstrap
         shell: pwsh
