@@ -19,15 +19,25 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
-      - uses: streetsidesoftware/cspell-action@v6
+      - name: Validate changelog (keepachangelog)
+        if: always()
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          validation_level: error
+          path: ./CHANGELOG.md
+      - name: Spell check
+        if: always()
+        uses: streetsidesoftware/cspell-action@v6
         with:
           strict: false
           suggestions: true
           incremental_files_only: true
-      - shell: pwsh
-        name: Apply PSScriptAnalyzer Fixes
+      - name: Apply PSScriptAnalyzer Fixes
+        if: always()
+        shell: pwsh
         run: Invoke-ScriptAnalyzer . -Fix
       - name: PSScriptAnalyzer Fixes
+        if: always()
         uses: reviewdog/action-suggester@v1.21.0
         with:
           tool_name: "PSScriptAnalyzer"
@@ -70,8 +80,7 @@ jobs:
       - test_pwsh
       - test_powershell
     runs-on: ubuntu-latest
-    # the test job might be skipped, we don't need to run this job then
-    if: success() || failure()
+    if: always()
 
     steps:
       - name: Download Artifacts
