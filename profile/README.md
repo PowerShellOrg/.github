@@ -5,10 +5,11 @@ open-source PowerShell tools that would otherwise go unmaintained.
 
 ## Maintained tools
 
-| Module               | Description                                                           | Status                   | Steward                                             |
-| -------------------- | --------------------------------------------------------------------- | ------------------------ | --------------------------------------------------- |
-| [Plaster][plaster]   | Template-based scaffolding engine for PowerShell projects and modules | ![Active][status-active] | [James Petty](https://github.com/psjamesp)          |
-| [PSDepend][psdepend] | Dependency management for PowerShell scripts and modules              | ![Active][status-active] | [Gilbert Sanchez](https://github.com/HeyItsGilbert) |
+| Module               | Description                                                                                      | Status                   | Steward                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------ | ------------------------ | --------------------------------------------------- |
+| [Plaster][plaster]   | Template-based scaffolding engine for PowerShell projects and modules                            | ![Active][status-active] | [James Petty](https://github.com/psjamesp)          |
+| [PSDepend][psdepend] | Dependency management for PowerShell scripts and modules                                         | ![Active][status-active] | [Gilbert Sanchez](https://github.com/HeyItsGilbert) |
+| [PSKoans][PSKoans]   | A simple, fun, and interactive way to learn the PowerShell language through Pester unit testing. | ![Active][status-active] | [Andrew Pla](https://github.com/AndrewPla)          |
 
 **Status legend:**
 - ![Active][status-active] actively maintained
@@ -47,6 +48,7 @@ See [CONTRIBUTING.md][contributing] for how we work.
 
 [plaster]: https://github.com/PowerShellOrg/Plaster
 [psdepend]: https://github.com/PowerShellOrg/PSDepend
+[PSKoans]: https://github.com/PowerShellOrg/PSKoans
 [status-active]: https://img.shields.io/badge/status-active-brightgreen
 [status-stable]: https://img.shields.io/badge/status-stable-blue
 [status-paused]: https://img.shields.io/badge/status-paused-yellow
