@@ -5,7 +5,7 @@ type: Task
 role: Steward
 ---
 
-Reference: [Playbook - Phase 4](https://github.com/PowerShellOrg/.github/blob/main/docs/revival-playbook.md#phase-4-first-clean-release)
+Reference: [Playbook - Phase 4](https://github.com/PowerShellOrg/.github/blob/main/docs/revival-playbook.md#phase-4-first-clean-release-weeks-4-8)
 (release steps)
 
 Goal: a release under the PowerShellOrg banner you are proud to put your name on.
