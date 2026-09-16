@@ -5,7 +5,7 @@ type: Task
 role: Steward
 ---
 
-Reference: [Playbook - Phase 2](https://github.com/PowerShellOrg/.github/blob/main/docs/revival-playbook.md#phase-2-pr-triage)
+Reference: [Playbook - Phase 2](https://github.com/PowerShellOrg/.github/blob/main/docs/revival-playbook.md#phase-2-pr-triage-weeks-1-4-parallel-with-phase-1)
 (decision tree, take-over and close templates)
 
 Goal: no PR sits without a decision. Runs alongside Phase 1.
