@@ -5,7 +5,7 @@ type: Task
 role: Steward
 ---
 
-Reference: [Playbook - Phase 3](https://github.com/PowerShellOrg/.github/blob/main/docs/revival-playbook.md#phase-3-build-modernization)
+Reference: [Playbook - Phase 3](https://github.com/PowerShellOrg/.github/blob/main/docs/revival-playbook.md#phase-3-build-modernization-weeks-2-6)
 (standard stack, CI and release YAML)
 
 Goal: the repo builds with the standard stack and CI is green on all platforms.
