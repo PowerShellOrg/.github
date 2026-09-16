@@ -5,7 +5,7 @@ type: Task
 role: Steward
 ---
 
-Reference: [Playbook - Phase 5](https://github.com/PowerShellOrg/.github/blob/main/docs/revival-playbook.md#phase-5-ongoing-maintenance)
+Reference: [Playbook - Phase 5](https://github.com/PowerShellOrg/.github/blob/main/docs/revival-playbook.md#phase-5-ongoing-maintenance-and-transition-to-active)
 (cadence table, graduation criteria)
 
 Closing this closes the revival. Ongoing cadence and graduation are in the playbook.
