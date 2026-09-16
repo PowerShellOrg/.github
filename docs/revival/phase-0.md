@@ -5,7 +5,7 @@ type: Task
 role: Steward (PSGallery items: Org Admin)
 ---
 
-Reference: [Playbook - Phase 0](https://github.com/PowerShellOrg/.github/blob/main/docs/revival-playbook.md#phase-0-take-inventory)
+Reference: [Playbook - Phase 0](https://github.com/PowerShellOrg/.github/blob/main/docs/revival-playbook.md#phase-0-take-inventory-week-1)
 
 ## Transfer and access
 
