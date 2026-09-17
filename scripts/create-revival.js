@@ -1,7 +1,8 @@
 // Opens one [REVIVAL] tracking issue plus six phase sub-issues from docs/revival/*.md.
 // Runs inside the reusable workflow, so context.repo is the CALLING module repo: issues are
 // created there and the baseline is read from there. Idempotent: re-running for the same
-// module finds the existing tracking issue and stops. Caller's GITHUB_TOKEN, issues: write.
+// module finds every existing issue by title, creates only what is missing, and attaches
+// any phase not yet linked. Caller's GITHUB_TOKEN, issues: write.
 const fs = require('fs');
 const path = require('path');
 
@@ -26,23 +27,47 @@ function fill(text, vars) {
   return text.replace(/\{\{(\w+)\}\}/g, (_, k) => (vars[k] ?? `_${k}_`));
 }
 
+const CALLER_PATH = '.github/workflows/revival-start.yml';
+
 async function baseline(github, owner, repo) {
   const r = (await github.rest.repos.get({ owner, repo })).data;
   // open_issues_count includes PRs; subtract an exact PR count.
   const open_prs = (await github.paginate(github.rest.pulls.list, { owner, repo, state: 'open', per_page: 100 })).length;
+
+  // CI detection. The caller workflow lives in .github/workflows, so its presence alone is not CI.
   const ci = [];
-  for (const [p, name] of [['.github/workflows', 'GitHub Actions'], ['appveyor.yml', 'AppVeyor'], ['azure-pipelines.yml', 'Azure Pipelines'], ['.travis.yml', 'Travis']]) {
+  try {
+    const entries = (await github.rest.repos.getContent({ owner, repo, path: '.github/workflows' })).data;
+    if (Array.isArray(entries) && entries.some(e => `.github/workflows/${e.name}` !== CALLER_PATH && /\.ya?ml$/.test(e.name))) ci.push('GitHub Actions');
+  } catch (e) { if (e.status !== 404) throw e; }
+  for (const [p, name] of [['appveyor.yml', 'AppVeyor'], ['azure-pipelines.yml', 'Azure Pipelines'], ['.travis.yml', 'Travis']]) {
     try { await github.rest.repos.getContent({ owner, repo, path: p }); ci.push(name); } catch (e) { if (e.status !== 404) throw e; }
   }
+
+  // Last real commit: skip commits that only touch the caller file.
+  let last_push = r.pushed_at.slice(0, 10);
+  const recent = (await github.rest.repos.listCommits({ owner, repo, per_page: 5 })).data;
+  for (const c of recent) {
+    const files = (await github.rest.repos.getCommit({ owner, repo, ref: c.sha })).data.files || [];
+    if (files.length && files.every(f => f.filename === CALLER_PATH)) continue;
+    last_push = c.commit.committer.date.slice(0, 10);
+    break;
+  }
+
   return {
-    repo_url: r.html_url, last_push: r.pushed_at.slice(0, 10), open_issues: r.open_issues_count - open_prs, open_prs,
+    repo_url: r.html_url, last_push, open_issues: r.open_issues_count - open_prs, open_prs,
     stars: r.stargazers_count, forks: r.forks_count, ci: ci.length ? ci.join(', ') : 'none',
   };
 }
 
-async function findExisting(github, owner, repo, title) {
+async function revivalIssues(github, owner, repo) {
   const issues = await github.paginate(github.rest.issues.listForRepo, { owner, repo, labels: TRACKING_LABEL, state: 'all', per_page: 100 });
-  return issues.find(i => !i.pull_request && i.title === title) || null;
+  return new Map(issues.filter(i => !i.pull_request).map(i => [i.title, i]));
+}
+
+async function subIssueIds(github, owner, repo, parentNumber) {
+  const subs = await github.paginate('GET /repos/{owner}/{repo}/issues/{issue_number}/sub_issues', { owner, repo, issue_number: parentNumber, per_page: 100 });
+  return new Set(subs.map(s => s.id));
 }
 
 async function ensureLabel(github, owner, repo) {
@@ -77,31 +102,37 @@ module.exports = async function run({ github, context, core, inputs }) {
     module, steward: inputs.steward ? '@' + inputs.steward.trim().replace(/^@/, '') : 'unassigned',
     today: new Date().toISOString().slice(0, 10), ...(await baseline(github, owner, repo)),
   };
-  const title = fill(tracking.title, vars);
-
-  const existing = await findExisting(github, owner, repo, title);
-  if (existing) {
-    core.summary.addRaw(`Tracking issue already exists: [#${existing.number}](${existing.html_url}) (${existing.state}). Nothing created.`).write();
-    core.setOutput('tracking_issue', existing.number);
-    return;
-  }
-
   await ensureLabel(github, owner, repo);
-  const parent = await createIssue(github, owner, repo, tracking, vars);
-  core.info(`Created ${parent.html_url}`);
+  const byTitle = await revivalIssues(github, owner, repo);
+  const findOrCreate = async (src) => {
+    const title = fill(src.title, vars);
+    if (byTitle.has(title)) { core.info(`exists  ${title} -> #${byTitle.get(title).number}`); return { issue: byTitle.get(title), created: false }; }
+    const issue = await createIssue(github, owner, repo, src, vars);
+    byTitle.set(title, issue);
+    core.info(`created ${title} -> #${issue.number}`);
+    return { issue, created: true };
+  };
 
-  const children = [];
+  // Find-or-create the parent, then reconcile every phase and every attachment. A re-run after a
+  // partial failure completes the set instead of stopping at "parent exists".
+  const { issue: parent, created: parentCreated } = await findOrCreate(tracking);
+  const attached = await subIssueIds(github, owner, repo, parent.number);
+  const children = []; let createdCount = parentCreated ? 1 : 0, attachedCount = 0;
   for (const name of PHASES) {
-    const child = await createIssue(github, owner, repo, parseSource(name), vars);
-    // sub_issue_id is the database id, not the issue number.
-    await github.request('POST /repos/{owner}/{repo}/issues/{issue_number}/sub_issues', { owner, repo, issue_number: parent.number, sub_issue_id: child.id });
+    const { issue: child, created } = await findOrCreate(parseSource(name));
+    if (created) createdCount++;
+    if (!attached.has(child.id)) {
+      // sub_issue_id is the database id, not the issue number.
+      await github.request('POST /repos/{owner}/{repo}/issues/{issue_number}/sub_issues', { owner, repo, issue_number: parent.number, sub_issue_id: child.id });
+      attachedCount++;
+    }
     children.push(child);
-    core.info(`  + ${child.title} -> #${child.number}`);
   }
 
+  const verb = createdCount === 0 && attachedCount === 0 ? 'Already complete' : `Reconciled (${createdCount} created, ${attachedCount} attached)`;
   core.setOutput('tracking_issue', parent.number);
-  core.summary.addHeading(`Revival started: ${module}`)
-    .addRaw(`Tracking issue [#${parent.number}](${parent.html_url}) with ${children.length} phase sub-issues.`)
+  core.summary.addHeading(`Revival: ${module}`)
+    .addRaw(`${verb}. Tracking issue [#${parent.number}](${parent.html_url}) with ${children.length} phase sub-issues.`)
     .addList(children.map(c => `#${c.number} ${c.title}`))
     .write();
 };
