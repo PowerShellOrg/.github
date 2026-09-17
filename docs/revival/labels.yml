@@ -1,5 +1,5 @@
 # PowerShellOrg module-revival label manifest
-# Destination: PowerShellOrg/.github (pending write access — see wayfinder T1)
+# Lives at PowerShellOrg/.github/docs/revival/labels.yml (PR #16). First applied to BuildHelpers 2026-09-17.
 #
 # Convention: colon-space, lowercase. No emoji. No "/", "&", or apostrophes in names —
 # they break label-sync tooling (vscode-powershell carries both "Area-Build & Release"
@@ -26,6 +26,11 @@
 - name: "help wanted"
   color: "008672"
   description: "Maintainer welcomes a PR on this"
+
+# The revival-start workflow creates this if missing; listed so the colour matches.
+- name: "revival"
+  color: "5319e7"
+  description: "Module revival tracking"
 
 # ---------------------------------------------------------------------------
 # area: — what part of the project. Multi-valued. The four below are universal;
