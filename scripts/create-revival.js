@@ -1,6 +1,7 @@
 // Opens one [REVIVAL] tracking issue plus six phase sub-issues from docs/revival/*.md.
-// Idempotent: re-running for the same module finds the existing tracking issue and stops.
-// Runs under the default GITHUB_TOKEN (issues: write). Needs nothing else.
+// Runs inside the reusable workflow, so context.repo is the CALLING module repo: issues are
+// created there and the baseline is read from there. Idempotent: re-running for the same
+// module finds the existing tracking issue and stops. Caller's GITHUB_TOKEN, issues: write.
 const fs = require('fs');
 const path = require('path');
 
@@ -25,21 +26,16 @@ function fill(text, vars) {
   return text.replace(/\{\{(\w+)\}\}/g, (_, k) => (vars[k] ?? `_${k}_`));
 }
 
-async function baseline(github, fullName) {
-  const blank = { last_push: '_unknown_', open_issues: '_unknown_', open_prs: '_unknown_', stars: '_unknown_', forks: '_unknown_', ci: '_unknown_' };
-  const [owner, repo] = fullName.split('/');
-  let r;
-  try { r = (await github.rest.repos.get({ owner, repo })).data; }
-  catch (e) { if (e.status === 404) return { ...blank, repo_url: `https://github.com/${fullName}`, note: 'repo not found; fill baseline by hand' }; throw e; }
-  // open_issues_count includes PRs; subtract an exact PR count. No search API: it lags and misfired under GITHUB_TOKEN.
+async function baseline(github, owner, repo) {
+  const r = (await github.rest.repos.get({ owner, repo })).data;
+  // open_issues_count includes PRs; subtract an exact PR count.
   const open_prs = (await github.paginate(github.rest.pulls.list, { owner, repo, state: 'open', per_page: 100 })).length;
-  const open_issues = r.open_issues_count - open_prs;
   const ci = [];
   for (const [p, name] of [['.github/workflows', 'GitHub Actions'], ['appveyor.yml', 'AppVeyor'], ['azure-pipelines.yml', 'Azure Pipelines'], ['.travis.yml', 'Travis']]) {
     try { await github.rest.repos.getContent({ owner, repo, path: p }); ci.push(name); } catch (e) { if (e.status !== 404) throw e; }
   }
   return {
-    repo_url: r.html_url, last_push: r.pushed_at.slice(0, 10), open_issues, open_prs,
+    repo_url: r.html_url, last_push: r.pushed_at.slice(0, 10), open_issues: r.open_issues_count - open_prs, open_prs,
     stars: r.stargazers_count, forks: r.forks_count, ci: ci.length ? ci.join(', ') : 'none',
   };
 }
@@ -74,13 +70,12 @@ async function createIssue(github, owner, repo, src, vars) {
 
 module.exports = async function run({ github, context, core, inputs }) {
   const { owner, repo } = context.repo;
-  const module = inputs.module.trim();
-  const target = (inputs.repo || `${owner}/${module}`).trim();
+  const module = (inputs.module || repo).trim();
   const tracking = parseSource('tracking');
 
   const vars = {
     module, steward: inputs.steward ? '@' + inputs.steward.trim().replace(/^@/, '') : 'unassigned',
-    today: new Date().toISOString().slice(0, 10), ...(await baseline(github, target)),
+    today: new Date().toISOString().slice(0, 10), ...(await baseline(github, owner, repo)),
   };
   const title = fill(tracking.title, vars);
 
@@ -104,15 +99,9 @@ module.exports = async function run({ github, context, core, inputs }) {
     core.info(`  + ${child.title} -> #${child.number}`);
   }
 
-  if (inputs.adoption_issue) {
-    await github.rest.issues.createComment({ owner, repo, issue_number: Number(inputs.adoption_issue),
-      body: `Revival tracking issue opened: #${parent.number}. Steward: ${vars.steward}.` });
-  }
-
   core.setOutput('tracking_issue', parent.number);
   core.summary.addHeading(`Revival started: ${module}`)
     .addRaw(`Tracking issue [#${parent.number}](${parent.html_url}) with ${children.length} phase sub-issues.`)
     .addList(children.map(c => `#${c.number} ${c.title}`))
-    .addRaw(vars.note ? `\n\n> ${vars.note}` : '')
     .write();
 };
