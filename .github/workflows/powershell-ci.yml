@@ -25,6 +25,7 @@ jobs:
         with:
           validation_level: error
           path: ./CHANGELOG.md
+          validation_depth: 3
       - name: Spell check
         if: always()
         uses: streetsidesoftware/cspell-action@v6
