@@ -1,0 +1,71 @@
+# Reusable workflow: start a module revival.
+#
+# Call it from the module repo so the issues land there, where contributors look.
+# Drop this caller into the module repo as .github/workflows/revival-start.yml, then run it
+# from the Actions tab (or `gh workflow run revival-start.yml -f steward=<login>`):
+#
+#   name: Start module revival
+#   on:
+#     workflow_dispatch:
+#       inputs:
+#         steward:
+#           description: "GitHub login of the Steward"
+#           required: false
+#   permissions:
+#     issues: write
+#     contents: read
+#   jobs:
+#     start:
+#       uses: PowerShellOrg/.github/.github/workflows/revival-start.yml@main
+#       with:
+#         steward: ${{ inputs.steward }}
+#
+# Opens one "[REVIVAL] <Module>" tracking issue plus six phase sub-issues from
+# docs/revival/*.md in PowerShellOrg/.github. Idempotent: re-running finds the existing
+# tracking issue and stops. Runs on the caller's GITHUB_TOKEN; no secrets.
+
+name: Start module revival (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      module:
+        description: "Module name for titles. Defaults to the calling repo's name."
+        type: string
+        required: false
+      steward:
+        description: "GitHub login of the Steward (assigned to every issue)"
+        type: string
+        required: false
+      source_ref:
+        description: "Branch or tag of PowerShellOrg/.github to read docs/revival from"
+        type: string
+        required: false
+        default: main
+    outputs:
+      tracking_issue:
+        description: "Number of the tracking issue (new or existing)"
+        value: ${{ jobs.create.outputs.tracking_issue }}
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    outputs:
+      tracking_issue: ${{ steps.run.outputs.tracking_issue }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: PowerShellOrg/.github
+          ref: ${{ inputs.source_ref }}
+      - id: run
+        uses: actions/github-script@v8
+        env:
+          INPUTS: ${{ toJSON(inputs) }}
+        with:
+          script: |
+            const run = require('./scripts/create-revival.js');
+            await run({ github, context, core, inputs: JSON.parse(process.env.INPUTS) });
